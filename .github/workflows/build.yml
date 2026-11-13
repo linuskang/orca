@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Image tag (defaults to short SHA)"
+        description: "Image tag"
         required: false
         type: string
 

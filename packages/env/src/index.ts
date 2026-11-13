@@ -44,5 +44,5 @@ export const env = createEnv({
    * Skip validation during CI / when explicitly requested, so builds don't
    * require real secret values.
    */
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  skipValidation: process.env.SKIP_ENV_VALIDATION! === "1",
 })
