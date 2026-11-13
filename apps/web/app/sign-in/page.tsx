@@ -52,7 +52,10 @@ export default function SignInPage() {
         </button>
       </form>
       <p className="mt-4 text-sm">
-        No account? <a href="/sign-up" className="underline">Sign up</a>
+        No account?{" "}
+        <a href="/sign-up" className="underline">
+          Sign up
+        </a>
       </p>
     </main>
   )
