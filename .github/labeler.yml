@@ -1,0 +1,22 @@
+# Area labels based on changed paths
+"area: web":
+  - changed-files:
+      - any-glob-to-any-file: "apps/web/**"
+"area: ui":
+  - changed-files:
+      - any-glob-to-any-file: "packages/ui/**"
+"area: db":
+  - changed-files:
+      - any-glob-to-any-file: "packages/db/**"
+"area: auth":
+  - changed-files:
+      - any-glob-to-any-file: "packages/auth/**"
+"area: api":
+  - changed-files:
+      - any-glob-to-any-file: "packages/api/**"
+"area: env":
+  - changed-files:
+      - any-glob-to-any-file: "packages/env/**"
+"area: tooling":
+  - changed-files:
+      - any-glob-to-any-file: "tooling/**"
