@@ -36,4 +36,10 @@ export const env = createEnv({
    * Treat empty strings as undefined so defaults can apply.
    */
   emptyStringAsUndefined: true,
+
+  /**
+   * Skip validation during CI / when explicitly requested, so builds don't
+   * require real secret values.
+   */
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION || !!process.env.CI,
 })
