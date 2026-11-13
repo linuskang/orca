@@ -12,7 +12,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@workspace/auth": "workspace:*",
     "@workspace/db": "workspace:*",
+    "better-auth": "^1.7.22",
     "@workspace/env": "workspace:*",
     "@workspace/ui": "workspace:*",
     "lucide-react": "^1.72.0",
