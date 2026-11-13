@@ -24,9 +24,11 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@workspace/eslint-config": "workspace:^",
-    "@workspace/typescript-config": "workspace:*",
+    "@workspace/eslint": "workspace:^",
+    "@workspace/prettier": "workspace:*",
+    "@workspace/typescript": "workspace:*",
     "eslint": "^10",
     "typescript": "^5"
-  }
+  },
+  "prettier": "@workspace/prettier"
 }

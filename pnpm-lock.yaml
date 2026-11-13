@@ -8,12 +8,15 @@ importers:
 
   .:
     devDependencies:
-      '@workspace/eslint-config':
+      '@workspace/eslint':
         specifier: workspace:*
-        version: link:packages/eslint-config
-      '@workspace/typescript-config':
+        version: link:tooling/eslint
+      '@workspace/prettier':
         specifier: workspace:*
-        version: link:packages/typescript-config
+        version: link:tooling/prettier
+      '@workspace/typescript':
+        specifier: workspace:*
+        version: link:tooling/typescript
       prettier:
         specifier: ^3.9.10
         version: 3.9.10
@@ -60,56 +63,21 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.3.0(@types/react@19.3.0)
-      '@workspace/eslint-config':
+      '@workspace/eslint':
         specifier: workspace:^
-        version: link:../../packages/eslint-config
-      '@workspace/typescript-config':
+        version: link:../../tooling/eslint
+      '@workspace/prettier':
         specifier: workspace:*
-        version: link:../../packages/typescript-config
+        version: link:../../tooling/prettier
+      '@workspace/typescript':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
       eslint:
         specifier: ^10
         version: 10.14.0(jiti@2.7.0)(supports-color@7.2.0)
       typescript:
         specifier: ^5
         version: 5.9.3
-
-  packages/eslint-config:
-    devDependencies:
-      '@babel/core':
-        specifier: ^8.1.0
-        version: 8.1.0
-      '@babel/eslint-parser':
-        specifier: ^8.0.7
-        version: 8.0.7(@babel/core@8.1.0)(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
-      '@babel/preset-typescript':
-        specifier: ^8.0.7
-        version: 8.0.7(@babel/core@8.1.0)
-      '@eslint/js':
-        specifier: ^10
-        version: 10.0.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
-      '@next/eslint-plugin-next':
-        specifier: ^16.4.4
-        version: 16.4.4(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
-      eslint:
-        specifier: ^10
-        version: 10.14.0(jiti@2.7.0)(supports-color@7.2.0)
-      eslint-config-prettier:
-        specifier: ^10.1.8
-        version: 10.1.8(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
-      eslint-plugin-only-warn:
-        specifier: ^1.2.1
-        version: 1.2.1
-      eslint-plugin-react-hooks:
-        specifier: ^7.1.1
-        version: 7.1.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)
-      eslint-plugin-turbo:
-        specifier: ^2.11.10
-        version: 2.11.10(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(turbo@2.11.10)
-      globals:
-        specifier: ^17.14.0
-        version: 17.14.0
-
-  packages/typescript-config: {}
 
   packages/ui:
     dependencies:
@@ -186,12 +154,15 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.3.0(@types/react@19.3.0)
-      '@workspace/eslint-config':
+      '@workspace/eslint':
         specifier: workspace:*
-        version: link:../eslint-config
-      '@workspace/typescript-config':
+        version: link:../../tooling/eslint
+      '@workspace/prettier':
         specifier: workspace:*
-        version: link:../typescript-config
+        version: link:../../tooling/prettier
+      '@workspace/typescript':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
       eslint:
         specifier: ^10
         version: 10.14.0(jiti@2.7.0)(supports-color@7.2.0)
@@ -201,6 +172,53 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.3
+
+  tooling/eslint:
+    devDependencies:
+      '@babel/core':
+        specifier: ^8.1.0
+        version: 8.1.0
+      '@babel/eslint-parser':
+        specifier: ^8.0.7
+        version: 8.0.7(@babel/core@8.1.0)(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
+      '@babel/preset-typescript':
+        specifier: ^8.0.7
+        version: 8.0.7(@babel/core@8.1.0)
+      '@eslint/js':
+        specifier: ^10
+        version: 10.0.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
+      '@next/eslint-plugin-next':
+        specifier: ^16.4.4
+        version: 16.4.4(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
+      eslint:
+        specifier: ^10
+        version: 10.14.0(jiti@2.7.0)(supports-color@7.2.0)
+      eslint-config-prettier:
+        specifier: ^10.1.8
+        version: 10.1.8(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))
+      eslint-plugin-only-warn:
+        specifier: ^1.2.1
+        version: 1.2.1
+      eslint-plugin-react-hooks:
+        specifier: ^7.1.1
+        version: 7.1.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0)
+      eslint-plugin-turbo:
+        specifier: ^2.11.10
+        version: 2.11.10(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(turbo@2.11.10)
+      globals:
+        specifier: ^17.14.0
+        version: 17.14.0
+
+  tooling/prettier:
+    devDependencies:
+      prettier:
+        specifier: ^3.9.10
+        version: 3.9.10
+      prettier-plugin-tailwindcss:
+        specifier: ^0.8.1
+        version: 0.8.1(prettier@3.9.10)
+
+  tooling/typescript: {}
 
 packages:
 
@@ -241,10 +259,6 @@ packages:
 
   '@babel/generator@7.29.14':
     resolution: {integrity: sha512-qSY56jgW5JnSXzuekLVil6zaOQxOCtOHidr65KkaMBw772IuAY28Qx4ZykAcDn8+FRF15qk80XzKwgSc/RYW6g==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/generator@7.29.7':
-    resolution: {integrity: sha512-DkXD5OJQaAQIdZ1bt3UZdEnHAn9Imd3IVBdX03UFe+ony9Ojw5pzr9YVKGDY1jt+Gcn/FnGkNf8r+Vj5NOJWtQ==}
     engines: {node: '>=6.9.0'}
 
   '@babel/generator@8.1.0':
@@ -355,10 +369,6 @@ packages:
 
   '@babel/helper-string-parser@7.29.14':
     resolution: {integrity: sha512-CXvKMFvM80ihI7Vox9jb+kQjnyjESQNPM+vB7U0Zz6TWuZA+Z/FL0QPMH300h33qJtIx+REeBhXqWOPW48TcAQ==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/helper-string-parser@7.29.7':
-    resolution: {integrity: sha512-Pb5ijPrZ89GDH8223L4UP8i6QApWxs04RbPQJTeWDV0/keR2E36MeKnyr6LYmUUvqRRI+Iv87SuF1W6ErINzYw==}
     engines: {node: '>=6.9.0'}
 
   '@babel/helper-string-parser@8.0.8':
@@ -473,20 +483,12 @@ packages:
     resolution: {integrity: sha512-RAdQJrBgmIH1FWvN0X+1hoDxzMzlP4cv/1Zi4dn4tG1H0cTb+rw7CzUxQJhp1f4ANd8j5vH3fy8BAWFGkBDEsA==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/traverse@7.29.7':
-    resolution: {integrity: sha512-EhlfNQtZ+NK22w5BM61ciuiq1m58ed33Wr1Xan//ZRTy6hgjnwyCffRYwzsGXdASJSUJ1guZILsErh1eQcl+zw==}
-    engines: {node: '>=6.9.0'}
-
   '@babel/traverse@8.1.0':
     resolution: {integrity: sha512-oQ0QI6MR4cm6bOR/Ua5HLPxvO7vborT7Le5HNt9GmZUKpNsaPl2yj4gsQ440lXaZjc4vmUbSeVgEcK4cHuCL2A==}
     engines: {node: ^22.18.0 || >=24.11.0}
 
   '@babel/types@7.29.14':
     resolution: {integrity: sha512-UjI/dKmwJwT9pOszJitq2G6EObZPnsZUfdCr92z2TlF3EZK9J3EdfOKUrCzHl6wFthbzwhzl1Soc/UIwxRiq6w==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/types@7.29.7':
-    resolution: {integrity: sha512-4zBIxpPzowiZpusoFkyGVwakdRJUyuH5PxQ/PrqghfdFWWasvnCdPfQXHrenDai+gyLARulZjZowCOj6fjT4pA==}
     engines: {node: '>=6.9.0'}
 
   '@babel/types@8.1.0':
@@ -3289,14 +3291,6 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.31
       jsesc: 3.1.0
 
-  '@babel/generator@7.29.7':
-    dependencies:
-      '@babel/parser': 7.29.7
-      '@babel/types': 7.29.7
-      '@jridgewell/gen-mapping': 0.3.13
-      '@jridgewell/trace-mapping': 0.3.31
-      jsesc: 3.1.0
-
   '@babel/generator@8.1.0':
     dependencies:
       '@babel/parser': 8.1.0
@@ -3308,7 +3302,7 @@ snapshots:
 
   '@babel/helper-annotate-as-pure@7.29.7':
     dependencies:
-      '@babel/types': 7.29.7
+      '@babel/types': 7.29.14
 
   '@babel/helper-annotate-as-pure@8.0.0':
     dependencies:
@@ -3401,7 +3395,7 @@ snapshots:
 
   '@babel/helper-optimise-call-expression@7.29.7':
     dependencies:
-      '@babel/types': 7.29.7
+      '@babel/types': 7.29.14
 
   '@babel/helper-optimise-call-expression@8.0.0':
     dependencies:
@@ -3418,7 +3412,7 @@ snapshots:
       '@babel/core': 7.29.7(supports-color@7.2.0)
       '@babel/helper-member-expression-to-functions': 7.29.14(supports-color@7.2.0)
       '@babel/helper-optimise-call-expression': 7.29.7
-      '@babel/traverse': 7.29.7(supports-color@7.2.0)
+      '@babel/traverse': 7.29.14(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -3442,8 +3436,6 @@ snapshots:
       '@babel/types': 8.1.0
 
   '@babel/helper-string-parser@7.29.14': {}
-
-  '@babel/helper-string-parser@7.29.7': {}
 
   '@babel/helper-string-parser@8.0.8': {}
 
@@ -3471,7 +3463,7 @@ snapshots:
 
   '@babel/parser@7.29.7':
     dependencies:
-      '@babel/types': 7.29.7
+      '@babel/types': 7.29.14
 
   '@babel/parser@8.1.0':
     dependencies:
@@ -3571,18 +3563,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/traverse@7.29.7(supports-color@7.2.0)':
-    dependencies:
-      '@babel/code-frame': 7.29.7
-      '@babel/generator': 7.29.7
-      '@babel/helper-globals': 7.29.7
-      '@babel/parser': 7.29.7
-      '@babel/template': 7.29.7
-      '@babel/types': 7.29.7
-      debug: 4.4.3(supports-color@7.2.0)
-    transitivePeerDependencies:
-      - supports-color
-
   '@babel/traverse@8.1.0':
     dependencies:
       '@babel/code-frame': 8.0.6
@@ -3596,11 +3576,6 @@ snapshots:
   '@babel/types@7.29.14':
     dependencies:
       '@babel/helper-string-parser': 7.29.14
-      '@babel/helper-validator-identifier': 7.29.7
-
-  '@babel/types@7.29.7':
-    dependencies:
-      '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
 
   '@babel/types@8.1.0':
@@ -4297,7 +4272,7 @@ snapshots:
   '@shadcn/registry@0.2.1(supports-color@7.2.0)':
     dependencies:
       '@babel/core': 7.29.7(supports-color@7.2.0)
-      '@babel/parser': 7.29.7
+      '@babel/parser': 7.29.14
       '@babel/plugin-transform-typescript': 7.29.9(@babel/core@7.29.7(supports-color@7.2.0))(supports-color@7.2.0)
       '@babel/preset-typescript': 7.29.7(@babel/core@7.29.7(supports-color@7.2.0))(supports-color@7.2.0)
       '@dotenvx/dotenvx': 1.75.1
@@ -4864,7 +4839,7 @@ snapshots:
   eslint-plugin-react-hooks@7.1.1(eslint@10.14.0(jiti@2.7.0)(supports-color@7.2.0))(supports-color@7.2.0):
     dependencies:
       '@babel/core': 7.29.7(supports-color@7.2.0)
-      '@babel/parser': 7.29.7
+      '@babel/parser': 7.29.14
       eslint: 10.14.0(jiti@2.7.0)(supports-color@7.2.0)
       hermes-parser: 0.25.1
       zod: 4.6.7
