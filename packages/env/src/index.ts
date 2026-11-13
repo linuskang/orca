@@ -1,12 +1,13 @@
 import { config as loadDotenv } from "dotenv"
-import { fileURLToPath } from "node:url"
 import path from "node:path"
 import { createEnv } from "@t3-oss/env-core"
 import * as z from "zod"
 
-// Load the shared .env file at the root of the monorepo.
+// Load the shared .env file at the root of the monorepo. Resolved relative to
+// the current working directory (each consumer runs from its own package dir,
+// two levels below the repo root), so bundlers don't try to bundle the file.
 loadDotenv({
-  path: path.resolve(fileURLToPath(new URL("../../../.env", import.meta.url))),
+  path: path.resolve(process.cwd(), "../../.env"),
 })
 
 export const env = createEnv({
