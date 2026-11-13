@@ -2,6 +2,7 @@ import { Geist, Geist_Mono, Inter } from "next/font/google"
 
 import "@workspace/ui/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { TRPCProvider } from "@/components/trpc-provider"
 import { cn } from "@workspace/ui/lib/utils"
 import { TooltipProvider } from "@workspace/ui/components/tooltip"
 
@@ -30,7 +31,9 @@ export default function RootLayout({
     >
       <body>
         <TooltipProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <TRPCProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+          </TRPCProvider>
         </TooltipProvider>
       </body>
     </html>
