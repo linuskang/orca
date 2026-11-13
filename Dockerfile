@@ -49,7 +49,7 @@ COPY --from=builder /app/apps/web/.next/standalone ./
 # static assets
 COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
 # public assets
-COPY --from=builder /app/apps/web/public ./apps/web/public
+# COPY --from=builder /app/apps/web/public ./apps/web/public
 # entrypoint
 COPY entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
