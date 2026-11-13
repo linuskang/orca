@@ -195,6 +195,9 @@ importers:
       '@workspace/typescript':
         specifier: workspace:*
         version: link:../../tooling/typescript
+      dotenv:
+        specifier: ^17.0.0
+        version: 17.4.2
       eslint:
         specifier: ^10
         version: 10.14.0(jiti@2.7.0)(supports-color@7.2.0)

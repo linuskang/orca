@@ -9,5 +9,5 @@
     "ignoreDeprecations": "5.0",
     "noEmit": true
   },
-  "include": ["src", "generated", "prisma", "prisma7.config.ts"]
+  "include": ["src", "generated", "prisma", "prisma7.config.ts", "load-env.ts"]
 }

@@ -1,5 +1,6 @@
-import { env } from "@workspace/env"
+import "./load-env"
 import { defineConfig } from "prisma/config"
+import { env } from "@workspace/env"
 
 export default defineConfig({
   schema: "prisma/schema.prisma",

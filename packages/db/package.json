@@ -23,6 +23,7 @@
   "devDependencies": {
     "@types/pg": "^8.11.0",
     "@workspace/eslint": "workspace:*",
+    "dotenv": "^17.0.0",
     "@workspace/typescript": "workspace:*",
     "eslint": "^10",
     "prisma": "^7.10.1",
