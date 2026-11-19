@@ -22,6 +22,7 @@
     "react": "19.3.1",
     "react-day-picker": "^10.0.2",
     "react-dom": "19.3.1",
+    "react-hook-form": "^7.92.0",
     "react-resizable-panels": "^4.21.0",
     "recharts": "3.8.0",
     "shadcn": "^4.23.0",
@@ -46,7 +47,10 @@
   "exports": {
     "./globals.css": "./src/styles/globals.css",
     "./postcss.config": "./postcss.config.mjs",
-    "./lib/*": ["./src/lib/*.tsx", "./src/lib/*.ts"],
+    "./lib/*": [
+      "./src/lib/*.tsx",
+      "./src/lib/*.ts"
+    ],
     "./components/*": "./src/components/*.tsx",
     "./hooks/*": "./src/hooks/*.ts"
   }
