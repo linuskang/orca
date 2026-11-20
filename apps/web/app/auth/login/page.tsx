@@ -120,6 +120,13 @@ export default function Page() {
                   <Key /> Continue with Passkey
                 </Button>
 
+                <p className="text-end text-xs text-card-foreground">
+                  Forgot your password?{" "}
+                  <Link href="/auth/forgot-password" className="underline">
+                    Reset it here
+                  </Link>
+                </p>
+
                 {error && (
                   <p className="text-center text-xs text-destructive">
                     {error}

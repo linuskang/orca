@@ -18,7 +18,8 @@
     "@better-auth/prisma-adapter": "^1.7.22",
     "@workspace/db": "workspace:*",
     "@workspace/env": "workspace:*",
-    "better-auth": "^1.7.22"
+    "better-auth": "^1.7.22",
+    "resend": "^6.39.0"
   },
   "devDependencies": {
     "@workspace/eslint": "workspace:*",
