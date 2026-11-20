@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { TRPCProvider } from "@/components/trpc-provider"
 import { cn } from "@workspace/ui/lib/utils"
 import { TooltipProvider } from "@workspace/ui/components/tooltip"
+import { Toaster } from "@workspace/ui/components/sonner"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -35,6 +36,7 @@ export default function RootLayout({
             <ThemeProvider>{children}</ThemeProvider>
           </TRPCProvider>
         </TooltipProvider>
+        <Toaster position="top-center" />
       </body>
     </html>
   )

@@ -1,71 +1,148 @@
 "use client"
 
+import Link from "next/link"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+
 import { authClient } from "@/lib/auth-client"
+import { createForm } from "@workspace/ui/components/form"
 
-export default function SignUpPage() {
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
+import { Card } from "@workspace/ui/components/card"
+import { Input } from "@workspace/ui/components/input"
+import { Button } from "@workspace/ui/components/button"
+import { Checkbox } from "@workspace/ui/components/checkbox"
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError("")
-    const { error } = await authClient.signUp.email({ name, email, password })
-    setLoading(false)
-    if (error) {
-      setError(error.message ?? "Sign up failed")
-      return
-    }
-    window.location.href = "/dashboard"
+type SignupFormData = {
+  name: string
+  email: string
+  password: string
+}
+
+const SignupForm = createForm<SignupFormData>()
+
+export default function Page() {
+  const [signUpDisabled, setSignUpDisabled] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const router = useRouter()
+
+  const signUp = async (d: SignupFormData) => {
+    await authClient.signUp.email(
+      {
+        name: d.name,
+        email: d.email,
+        password: d.password,
+      },
+      {
+        onRequest: () => {
+          setSignUpDisabled(true)
+          setError(null)
+        },
+        onSuccess: () => {
+          toast.success(
+            "Account created successfully! Please log in to continue."
+          )
+          router.push("/auth/login")
+          setSignUpDisabled(false)
+        },
+        onError: (ctx) => {
+          setSignUpDisabled(false)
+          setError(ctx.error.message)
+        },
+      }
+    )
   }
-
   return (
-    <main className="mx-auto max-w-sm p-6">
-      <h1 className="mb-4 text-2xl font-semibold">Sign up</h1>
-      <form onSubmit={onSubmit} className="flex flex-col gap-3">
-        <input
-          type="text"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="rounded border px-3 py-2"
-          required
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="rounded border px-3 py-2"
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="rounded border px-3 py-2"
-          required
-        />
-        {error && <p className="text-sm text-red-500">{error}</p>}
-        <button
-          type="submit"
-          disabled={loading}
-          className="rounded bg-black px-3 py-2 text-white disabled:opacity-50"
-        >
-          {loading ? "Signing up..." : "Sign up"}
-        </button>
-      </form>
-      <p className="mt-4 text-sm">
-        Already have an account?{" "}
-        <a href="/sign-in" className="underline">
-          Sign in
-        </a>
-      </p>
-    </main>
+    <div className="flex min-h-screen flex-col items-center justify-center">
+      <Card className="w-full max-w-sm gap-0 p-0">
+        <div className="rounded-b-xl border-b border-inner-border bg-inner-card p-4">
+          <h1 className="text-xl font-semibold text-foreground">Orca</h1>
+          <p className="mt-1 text-xs text-card-foreground">
+            Create an account to get started
+          </p>
+
+          <div className="mt-4">
+            <SignupForm onSubmit={(d) => signUp(d)}>
+              <div className="space-y-4">
+                <SignupForm.Item name="name">
+                  <SignupForm.Label>Name</SignupForm.Label>
+                  <SignupForm.Field
+                    required
+                    rules={{
+                      minLength: {
+                        value: 2,
+                        message: "Name must be at least 2 characters",
+                      },
+                    }}
+                  >
+                    <Input
+                      type="text"
+                      autoFocus
+                      placeholder="John Doe"
+                      className="text-foreground"
+                    />
+                  </SignupForm.Field>
+                  <SignupForm.Error className="-mt-2 text-xs text-destructive" />
+                </SignupForm.Item>
+                <SignupForm.Item name="email">
+                  <SignupForm.Label>Email</SignupForm.Label>
+                  <SignupForm.Field
+                    required
+                    rules={{
+                      pattern: {
+                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        message: "Enter a valid email address",
+                      },
+                    }}
+                  >
+                    <Input
+                      type="email"
+                      autoFocus
+                      placeholder="you@example.com"
+                      className="text-foreground"
+                    />
+                  </SignupForm.Field>
+                  <SignupForm.Error className="-mt-2 text-xs text-destructive" />
+                </SignupForm.Item>
+
+                <SignupForm.Item name="password">
+                  <SignupForm.Label>Password</SignupForm.Label>
+                  <SignupForm.Field required>
+                    <Input type="password" className="text-foreground" />
+                  </SignupForm.Field>
+                  <SignupForm.Error className="-mt-2 text-xs text-destructive" />
+                </SignupForm.Item>
+
+                <SignupForm.Submit asChild>
+                  <Button
+                    className="w-full text-foreground"
+                    disabled={signUpDisabled}
+                  >
+                    Create Account
+                  </Button>
+                </SignupForm.Submit>
+
+                {error && (
+                  <p className="text-center text-xs text-destructive">
+                    {error}
+                  </p>
+                )}
+              </div>
+            </SignupForm>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center justify-center py-3">
+          <p className="text-xs font-medium text-card-foreground">
+            Already have an account?{" "}
+            <Link href="/auth/login" className="underline">
+              Sign in
+            </Link>
+            .
+          </p>
+        </div>
+      </Card>
+    </div>
   )
 }
