@@ -5,7 +5,7 @@ import { env } from "@workspace/env"
 import { admin } from "better-auth/plugins"
 import { Resend } from "resend"
 
-const r = new Resend(env.RESEND_API_KEY)
+const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -18,7 +18,12 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     sendResetPassword: async ({ user, url }) => {
-      await r.emails.send({
+      if (!resend) {
+        console.warn("RESEND_API_KEY is not set")
+        return
+      }
+
+      await resend.emails.send({
         from: env.RESEND_FROM_EMAIL,
         to: user.email,
         subject: "(Orca) Reset your password",
@@ -31,7 +36,12 @@ export const auth = betterAuth({
       })
     },
     onPasswordReset: async ({ user }) => {
-      await r.emails.send({
+      if (!resend) {
+        console.warn("RESEND_API_KEY is not set")
+        return
+      }
+
+      await resend.emails.send({
         from: env.RESEND_FROM_EMAIL,
         to: user.email,
         subject: "(Orca) Your password has been reset",
