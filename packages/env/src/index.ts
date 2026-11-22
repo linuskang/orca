@@ -25,7 +25,9 @@ export const env = createEnv({
    */
   clientPrefix: "NEXT_PUBLIC_",
 
-  client: {},
+  client: {
+    NEXT_PUBLIC_APP_VERSION: z.string(),
+  },
 
   /**
    * What object holds the environment variables at runtime.

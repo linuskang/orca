@@ -1,4 +1,5 @@
 import type { NextConfig } from "next"
+import pkg from "./package.json" with { type: "json" }
 
 const nextConfig: NextConfig = {
   output: "standalone",
@@ -9,6 +10,9 @@ const nextConfig: NextConfig = {
     "@workspace/auth",
     "@workspace/api",
   ],
+  env: {
+    NEXT_PUBLIC_APP_VERSION: pkg.version,
+  },
 }
 
 export default nextConfig
