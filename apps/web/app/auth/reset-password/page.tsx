@@ -124,10 +124,7 @@ function ResetPasswordContent() {
                 </ResetPasswordForm.Item>
 
                 <ResetPasswordForm.Submit asChild>
-                  <Button
-                    className="w-full text-foreground"
-                    disabled={disabled}
-                  >
+                  <Button className="w-full" disabled={disabled}>
                     Reset Password
                   </Button>
                 </ResetPasswordForm.Submit>

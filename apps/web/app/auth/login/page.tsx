@@ -103,10 +103,7 @@ export default function Page() {
                 </LoginForm.Item>
 
                 <LoginForm.Submit asChild>
-                  <Button
-                    className="w-full text-foreground"
-                    disabled={signInDisabled}
-                  >
+                  <Button className="w-full" disabled={signInDisabled}>
                     Sign in
                   </Button>
                 </LoginForm.Submit>
@@ -119,14 +116,6 @@ export default function Page() {
                 >
                   <Key /> Continue with Passkey
                 </Button>
-
-                <p className="text-end text-xs text-card-foreground">
-                  Forgot your password?{" "}
-                  <Link href="/auth/forgot-password" className="underline">
-                    Reset it here
-                  </Link>
-                </p>
-
                 {error && (
                   <p className="text-center text-xs text-destructive">
                     {error}
@@ -137,7 +126,12 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-center py-3">
+        <div className="flex flex-col items-center justify-center gap-2 py-3">
+          <p className="text-xs font-medium text-card-foreground">
+            <Link href="/auth/forgot-password" className="underline">
+              Forgotten your password?
+            </Link>
+          </p>
           <p className="text-xs font-medium text-card-foreground">
             Don&apos;t have an account?{" "}
             <Link href="/auth/register" className="underline">

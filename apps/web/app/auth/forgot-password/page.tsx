@@ -86,10 +86,7 @@ export default function Page() {
                 </RequestResetPasswordForm.Item>
 
                 <RequestResetPasswordForm.Submit asChild>
-                  <Button
-                    className="w-full text-foreground"
-                    disabled={disabled}
-                  >
+                  <Button className="w-full" disabled={disabled}>
                     Send Password Reset Link
                   </Button>
                 </RequestResetPasswordForm.Submit>

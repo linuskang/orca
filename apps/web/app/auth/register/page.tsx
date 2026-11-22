@@ -115,10 +115,7 @@ export default function Page() {
                 </SignupForm.Item>
 
                 <SignupForm.Submit asChild>
-                  <Button
-                    className="w-full text-foreground"
-                    disabled={signUpDisabled}
-                  >
+                  <Button className="w-full" disabled={signUpDisabled}>
                     Create Account
                   </Button>
                 </SignupForm.Submit>
