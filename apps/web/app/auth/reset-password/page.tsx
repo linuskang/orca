@@ -61,7 +61,7 @@ function ResetPasswordContent() {
   }
 
   return (
-    <Card className="w-full max-w-sm gap-0 p-0">
+    <Card className="w-full max-w-sm gap-0 p-0 shadow-md">
       <div className="rounded-b-xl border-b border-inner-border bg-inner-card p-4">
         <h1 className="text-xl font-semibold text-foreground">Orca</h1>
         <p className="mt-1 text-xs text-card-foreground">
@@ -75,7 +75,7 @@ function ResetPasswordContent() {
                 This reset link is invalid or has expired.
               </p>
               <Button
-                className="w-full text-foreground"
+                className="w-full"
                 onClick={() => router.push("/auth/forgot-password")}
               >
                 Request New Link
