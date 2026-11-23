@@ -38,12 +38,8 @@ export function AppSidebar({
           </h1>
 
           <span className="text-[11px] font-medium tracking-tight text-muted-foreground hover:text-primary">
-            <Link
-              href="https://linus.my/orca/latest"
-              target="_blank"
-              rel="noreferrer"
-            >
-              v0.0.1
+            <Link href="https://linus.my/orca" target="_blank" rel="noreferrer">
+              v{process.env.NEXT_PUBLIC_APP_VERSION}
             </Link>
           </span>
         </div>
@@ -54,7 +50,7 @@ export function AppSidebar({
         {navigation.map((group) => (
           <SidebarGroup
             key={group.title}
-            className="py-1 first:pt-0 group-data-[collapsible=icon]:py-0"
+            className="py-1 group-data-[collapsible=icon]:py-0 first:pt-0"
           >
             <SidebarGroupLabel className="h-7 px-2 text-[11px] font-medium text-muted-foreground group-data-[collapsible=icon]:pointer-events-none group-data-[collapsible=icon]:-mt-7">
               {group.title}
@@ -106,7 +102,7 @@ export function AppSidebar({
               />
             ) : null}
           </div>
-          <SidebarTrigger className="size-7 shrink-0 text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-6" />
+          <SidebarTrigger className="size-7 shrink-0 text-muted-foreground group-data-[collapsible=icon]:size-6 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" />
         </div>
       </SidebarFooter>
 

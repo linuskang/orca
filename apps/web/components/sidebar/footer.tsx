@@ -120,7 +120,7 @@ export function SidebarFooter({
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              <DropdownMenuItem render={<Link href="/settings" />}>
+              <DropdownMenuItem render={<Link href="/profile" />}>
                 <CircleUser className="text-muted-foreground" />
                 Profile
               </DropdownMenuItem>

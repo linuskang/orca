@@ -2,9 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
 
-import { navigation } from "@/components/sidebar/navigation"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,80 +12,96 @@ import {
   BreadcrumbSeparator,
 } from "@workspace/ui/components/breadcrumb"
 
-function formatSegment(segment: string) {
-  return segment
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ")
+export type BreadcrumbEntry = {
+  label: string
+  href?: string
+}
+
+type BreadcrumbContextValue = {
+  items: BreadcrumbEntry[]
+  setItems: React.Dispatch<React.SetStateAction<BreadcrumbEntry[]>>
+}
+
+const BreadcrumbContext = React.createContext<BreadcrumbContextValue | null>(
+  null
+)
+
+export function BreadcrumbProvider({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const [items, setItems] = React.useState<BreadcrumbEntry[]>([])
+
+  const value = React.useMemo(() => ({ items, setItems }), [items])
+
+  return (
+    <BreadcrumbContext.Provider value={value}>
+      {children}
+    </BreadcrumbContext.Provider>
+  )
+}
+
+export function PageBreadcrumb({ items }: { items: BreadcrumbEntry[] }) {
+  const context = React.useContext(BreadcrumbContext)
+  const setItems = context?.setItems
+  const serialized = JSON.stringify(items)
+
+  React.useEffect(() => {
+    if (!setItems) return
+    const next = JSON.parse(serialized) as BreadcrumbEntry[]
+    setItems(next)
+    return () => {
+      setItems([])
+    }
+  }, [serialized, setItems])
+
+  return null
 }
 
 export function AppBreadcrumb() {
-  const pathname = usePathname()
+  const context = React.useContext(BreadcrumbContext)
+  const items = context?.items ?? []
 
-  const matched = React.useMemo(() => {
-    for (const group of navigation) {
-      for (const item of group.items) {
-        if (pathname === item.href || pathname.startsWith(`${item.href}/`)) {
-          const rest = pathname
-            .slice(item.href.length)
-            .split("/")
-            .filter(Boolean)
-          return { group, item, rest }
-        }
-      }
-    }
+  if (items.length === 0) {
     return null
-  }, [pathname])
-
-  if (!matched) {
-    const segments = pathname.split("/").filter(Boolean)
-    return (
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbPage>
-              {segments.length > 0
-                ? formatSegment(segments[segments.length - 1]!)
-                : "Orca"}
-            </BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-    )
   }
-
-  const { group, item, rest } = matched
 
   return (
     <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem className="hidden md:inline-flex">
-          <span className="text-muted-foreground">{group.title}</span>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator className="hidden md:inline-flex" />
-        <BreadcrumbItem>
-          {rest.length > 0 ? (
-            <BreadcrumbLink render={<Link href={item.href} />}>
-              {item.title}
-            </BreadcrumbLink>
-          ) : (
-            <BreadcrumbPage>{item.title}</BreadcrumbPage>
-          )}
-        </BreadcrumbItem>
-        {rest.map((segment, index) => {
-          const href = `${item.href}/${rest.slice(0, index + 1).join("/")}`
-          const isLast = index === rest.length - 1
+      <BreadcrumbList className="gap-2.5 text-[13px]">
+        {items.map((item, index) => {
+          const isLast = index === items.length - 1
+          const key = `${item.href ?? item.label}-${index}`
 
           return (
-            <React.Fragment key={href}>
-              <BreadcrumbSeparator />
+            <React.Fragment key={key}>
+              <BreadcrumbSeparator className="text-muted-foreground/45">
+                /
+              </BreadcrumbSeparator>
               <BreadcrumbItem>
-                {isLast ? (
-                  <BreadcrumbPage>{formatSegment(segment)}</BreadcrumbPage>
-                ) : (
-                  <BreadcrumbLink render={<Link href={href} />}>
-                    {formatSegment(segment)}
+                {item.href ? (
+                  <BreadcrumbLink
+                    render={<Link href={item.href} />}
+                    aria-current={isLast ? "page" : undefined}
+                    className={
+                      isLast
+                        ? "font-medium text-foreground/75 hover:text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    }
+                  >
+                    {item.label}
                   </BreadcrumbLink>
+                ) : (
+                  <BreadcrumbPage
+                    className={
+                      isLast
+                        ? "font-medium text-foreground/75"
+                        : "text-muted-foreground"
+                    }
+                  >
+                    {item.label}
+                  </BreadcrumbPage>
                 )}
               </BreadcrumbItem>
             </React.Fragment>

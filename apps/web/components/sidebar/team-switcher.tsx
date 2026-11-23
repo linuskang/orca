@@ -59,10 +59,10 @@ export function TeamSwitcher() {
           />
         }
       >
-        <div className="flex size-5 shrink-0 items-center justify-center rounded-sm bg-muted text-[11px] font-semibold text-foreground">
+        <div className="flex size-5 shrink-0 items-center justify-center rounded-sm bg-muted text-[11px] font-semibold text-foreground/80">
           {getInitial(activeTeam.name)}
         </div>
-        <span className="truncate text-[13px] font-medium tracking-tight text-foreground">
+        <span className="truncate text-[13px] font-medium tracking-tight text-foreground/75 transition-colors group-hover/button:text-foreground">
           {activeTeam.name}
         </span>
         <ChevronsUpDown className="size-3 text-muted-foreground" />
