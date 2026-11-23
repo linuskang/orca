@@ -7,7 +7,6 @@ import {
   BookOpen,
   ChevronsUpDown,
   ExternalLink,
-  Home,
   LogOut,
   Monitor,
   Moon,
