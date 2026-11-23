@@ -1,0 +1,32 @@
+import { cookies } from "next/headers"
+
+import { AppSidebar } from "@/components/sidebar"
+import { TeamSwitcher } from "@/components/sidebar/team-switcher"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@workspace/ui/components/sidebar"
+
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const cookieStore = await cookies()
+  const sidebarState = cookieStore.get("sidebar_state")?.value
+  const defaultOpen = sidebarState ? sidebarState === "true" : true
+
+  return (
+    <SidebarProvider defaultOpen={defaultOpen}>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-12 shrink-0 items-center gap-2 px-4">
+          <SidebarTrigger className="-ml-1 md:hidden" />
+          <TeamSwitcher />
+        </header>
+        <div className="flex flex-1 flex-col">{children}</div>
+      </SidebarInset>
+    </SidebarProvider>
+  )
+}

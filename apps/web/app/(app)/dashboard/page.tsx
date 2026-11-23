@@ -10,12 +10,12 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!isPending && !session) {
-      router.push("/sign-in")
+      router.push("/auth/login")
     }
   }, [isPending, session, router])
 
   if (isPending) {
-    return <main className="p-6">Loading...</main>
+    return <div className="p-6 text-sm text-muted-foreground">Loading...</div>
   }
 
   if (!session) {
@@ -23,16 +23,16 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="mx-auto max-w-md p-6">
+    <div className="mx-auto w-full max-w-md p-6">
       <h1 className="mb-4 text-2xl font-semibold">Dashboard</h1>
       <p className="mb-2">Welcome, {session.user.name ?? session.user.email}</p>
-      <p className="mb-4 text-sm text-gray-500">{session.user.email}</p>
+      <p className="mb-4 text-sm text-muted-foreground">{session.user.email}</p>
       <button
         onClick={() => authClient.signOut()}
-        className="rounded border px-3 py-2"
+        className="rounded-md border px-3 py-2 text-sm"
       >
         Sign out
       </button>
-    </main>
+    </div>
   )
 }
