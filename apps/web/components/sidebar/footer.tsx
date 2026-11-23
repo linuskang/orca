@@ -11,8 +11,7 @@ import {
   LogOut,
   Monitor,
   Moon,
-  Settings,
-  Sparkles,
+  CircleUser,
   Sun,
 } from "lucide-react"
 
@@ -89,9 +88,7 @@ export function SidebarFooter({
           >
             <Avatar className="size-5 shrink-0 group-data-[collapsible=icon]:size-6">
               <AvatarImage src={user.image} alt={user.name} />
-              <AvatarFallback className="text-[11px]">
-                {initial}
-              </AvatarFallback>
+              <AvatarFallback className="text-[11px]">{initial}</AvatarFallback>
             </Avatar>
 
             <div className="grid flex-1 text-left text-xs leading-tight group-data-[collapsible=icon]:hidden">
@@ -109,14 +106,8 @@ export function SidebarFooter({
             <DropdownMenuGroup>
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1.5 py-1.5 text-left text-sm">
-                  <Avatar className="size-6 shrink-0">
-                    <AvatarImage src={user.image} alt={user.name} />
-                    <AvatarFallback className="text-xs">
-                      {initial}
-                    </AvatarFallback>
-                  </Avatar>
                   <div className="grid flex-1 text-left text-xs leading-tight">
-                    <span className="truncate font-medium text-popover-foreground">
+                    <span className="truncate text-sm font-medium text-popover-foreground">
                       {user.name}
                     </span>
                     <span className="truncate text-[11px] text-muted-foreground">
@@ -130,20 +121,15 @@ export function SidebarFooter({
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              <DropdownMenuLabel>Account</DropdownMenuLabel>
-              <DropdownMenuItem>
-                <Sparkles className="text-muted-foreground" />
-                Upgrade to Pro
-              </DropdownMenuItem>
               <DropdownMenuItem render={<Link href="/settings" />}>
-                <Settings className="text-muted-foreground" />
-                Settings
+                <CircleUser className="text-muted-foreground" />
+                Profile
               </DropdownMenuItem>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <Sun className="size-4 text-muted-foreground dark:hidden" />
                   <Moon className="hidden size-4 text-muted-foreground dark:block" />
-                  Theme
+                  Appearance
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
                   <DropdownMenuRadioGroup
@@ -170,7 +156,6 @@ export function SidebarFooter({
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              <DropdownMenuLabel>Resources</DropdownMenuLabel>
               <DropdownMenuItem
                 render={
                   <a
@@ -183,13 +168,9 @@ export function SidebarFooter({
                 <ExternalLink className="text-muted-foreground" />
                 GitHub
               </DropdownMenuItem>
-              <DropdownMenuItem render={<Link href="/" />}>
-                <Home className="text-muted-foreground" />
-                Homepage
-              </DropdownMenuItem>
               <DropdownMenuItem render={<Link href="/docs" />}>
                 <BookOpen className="text-muted-foreground" />
-                Docs
+                Documentation
               </DropdownMenuItem>
             </DropdownMenuGroup>
 
