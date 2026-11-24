@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Check, ChevronsUpDown, Plus } from "lucide-react"
+import { Check, ChevronDown, ChevronUp, Plus } from "lucide-react"
 
 import { authClient } from "@/lib/auth-client"
 import { Button } from "@workspace/ui/components/button"
@@ -36,6 +36,7 @@ export function TeamSwitcher() {
     return [{ id: "personal", name: personalName }]
   }, [session?.user?.name])
 
+  const [open, setOpen] = React.useState(false)
   const [activeTeamId, setActiveTeamId] = React.useState("personal")
   const activeTeam = teams.find((team) => team.id === activeTeamId) ?? teams[0]!
 
@@ -49,7 +50,7 @@ export function TeamSwitcher() {
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         render={
           <Button
@@ -65,7 +66,11 @@ export function TeamSwitcher() {
         <span className="truncate text-[13px] font-medium tracking-tight text-foreground/75 transition-colors group-hover/button:text-foreground">
           {activeTeam.name}
         </span>
-        <ChevronsUpDown className="size-3 text-muted-foreground" />
+        {open ? (
+          <ChevronUp className="size-3 text-muted-foreground" />
+        ) : (
+          <ChevronDown className="size-3 text-muted-foreground" />
+        )}
       </DropdownMenuTrigger>
 
       <DropdownMenuContent

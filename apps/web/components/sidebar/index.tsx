@@ -22,6 +22,8 @@ import {
 } from "@workspace/ui/components/sidebar"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 
+export { InsetHeader } from "@/components/sidebar/inset-header"
+
 export function AppSidebar({
   collapsible = "icon",
   ...props

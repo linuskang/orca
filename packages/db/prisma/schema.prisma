@@ -8,19 +8,22 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String    @unique
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime  @db.Timestamptz(3)
-  updatedAt     DateTime  @db.Timestamptz(3)
-  sessions      Session[]
-  accounts      Account[]
-  role          String?
-  banned        Boolean?
-  banReason     String?
-  banExpires    DateTime? @db.Timestamptz(3)
+  id               String      @id
+  name             String
+  email            String      @unique
+  emailVerified    Boolean
+  image            String?
+  createdAt        DateTime    @db.Timestamptz(3)
+  updatedAt        DateTime    @db.Timestamptz(3)
+  sessions         Session[]
+  accounts         Account[]
+  twoFactors       TwoFactor[]
+  passkeys         Passkey[]
+  role             String?
+  banned           Boolean?
+  banReason        String?
+  banExpires       DateTime?   @db.Timestamptz(3)
+  twoFactorEnabled Boolean?    @default(false)
 
   @@map("user")
 }
@@ -71,4 +74,38 @@ model Verification {
 
   @@index([identifier], map: "verification_identifier_idx")
   @@map("verification")
+}
+
+model TwoFactor {
+  id                      String    @id
+  secret                  String
+  backupCodes             String
+  userId                  String
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verified                Boolean?  @default(true)
+  failedVerificationCount Int?      @default(0)
+  lockedUntil             DateTime? @db.Timestamptz(3)
+
+  @@index([secret], map: "twoFactor_secret_idx")
+  @@index([userId], map: "twoFactor_userId_idx")
+  @@map("twoFactor")
+}
+
+model Passkey {
+  id           String    @id
+  name         String?
+  publicKey    String
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credentialID String
+  counter      Int
+  deviceType   String
+  backedUp     Boolean
+  transports   String?
+  createdAt    DateTime? @db.Timestamptz(3)
+  aaguid       String?
+
+  @@index([userId], map: "passkey_userId_idx")
+  @@index([credentialID], map: "passkey_credentialID_idx")
+  @@map("passkey")
 }

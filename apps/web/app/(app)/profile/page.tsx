@@ -6,7 +6,6 @@ import { useTheme } from "next-themes"
 import { toast } from "sonner"
 import {
   Check,
-  KeyRound,
   Laptop,
   Loader2,
   Monitor,
@@ -15,6 +14,8 @@ import {
 } from "lucide-react"
 
 import { authClient } from "@/lib/auth-client"
+import { PasskeysSection } from "@/components/profile/passkeys-section"
+import { TwoFactorSection } from "@/components/profile/two-factor-section"
 import { PageBreadcrumb } from "@/components/sidebar/breadcrumb"
 import { cn } from "@workspace/ui/lib/utils"
 import {
@@ -314,21 +315,9 @@ function SecuritySection() {
         </div>
       </form>
 
-      <div className="flex items-center justify-between gap-4 rounded-lg border border-sidebar-border px-3.5 py-2.5">
-        <div className="flex items-center gap-2.5">
-          <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
-            <KeyRound className="size-3.5" />
-          </div>
-          <div>
-            <p className="text-xs font-medium text-foreground">Passkeys</p>
-            <p className="text-[11px] text-muted-foreground">
-              Sign in using biometrics or a security key.
-            </p>
-          </div>
-        </div>
-        <Button variant="outline" size="xs" disabled>
-          Coming soon
-        </Button>
+      <div className="space-y-2.5">
+        <TwoFactorSection />
+        <PasskeysSection />
       </div>
     </div>
   )

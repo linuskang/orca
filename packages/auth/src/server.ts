@@ -1,13 +1,32 @@
 import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
+import { admin, twoFactor } from "better-auth/plugins"
+import { getAuthenticatorName, passkey } from "@better-auth/passkey"
 import { prisma } from "@workspace/db"
 import { env } from "@workspace/env"
-import { admin } from "better-auth/plugins"
 import { Resend } from "resend"
 
 const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null
 
+function resolvePasskeyConfig() {
+  const fallbackUrl = "http://localhost:3000"
+  let parsedUrl: URL
+  try {
+    parsedUrl = new URL(env.BETTER_AUTH_URL || fallbackUrl)
+  } catch {
+    parsedUrl = new URL(fallbackUrl)
+  }
+
+  return {
+    rpID: env.PASSKEY_RP_ID ?? parsedUrl.hostname,
+    rpName: "Orca",
+    origin: env.PASSKEY_ORIGIN ?? parsedUrl.origin,
+  }
+}
+
 export const auth = betterAuth({
+  appName: "Orca",
+
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
@@ -54,7 +73,23 @@ export const auth = betterAuth({
     },
   },
 
-  plugins: [admin()],
+  plugins: [
+    admin(),
+    twoFactor({
+      issuer: "Orca",
+    }),
+    passkey({
+      ...resolvePasskeyConfig(),
+      registration: {
+        afterVerification: ({ verification }) => {
+          const detectedName = getAuthenticatorName(
+            verification.registrationInfo?.aaguid
+          )
+          return detectedName ? { name: detectedName } : undefined
+        },
+      },
+    }),
+  ],
 
   advanced: {
     database: {

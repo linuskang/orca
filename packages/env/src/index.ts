@@ -15,6 +15,8 @@ export const env = createEnv({
     DATABASE_URL: z.url(),
     BETTER_AUTH_SECRET: z.string().min(32),
     BETTER_AUTH_URL: z.url().default("http://localhost:3000"),
+    PASSKEY_RP_ID: z.string().min(1).optional(),
+    PASSKEY_ORIGIN: z.url().optional(),
     RESEND_API_KEY: z.string(),
     RESEND_FROM_EMAIL: z.email(),
   },
