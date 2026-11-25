@@ -5,6 +5,7 @@ import {
   AppBreadcrumb,
   BreadcrumbProvider,
 } from "@/components/sidebar/breadcrumb"
+import { InsetHeader } from "@/components/sidebar/inset-header"
 import { TeamSwitcher } from "@/components/sidebar/team-switcher"
 import {
   SidebarInset,
@@ -26,13 +27,13 @@ export default async function Layout({
       <SidebarProvider defaultOpen={defaultOpen}>
         <AppSidebar />
         <SidebarInset>
-          <header className="flex h-12 shrink-0 items-center gap-2 px-4">
+          <InsetHeader>
             <SidebarTrigger className="-ml-1 md:hidden" />
             <div className="flex items-center gap-0.5">
               <TeamSwitcher />
               <AppBreadcrumb />
             </div>
-          </header>
+          </InsetHeader>
           <div className="flex flex-1 flex-col">{children}</div>
         </SidebarInset>
       </SidebarProvider>

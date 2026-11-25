@@ -97,16 +97,16 @@ export function SidebarFooter({
           </DropdownMenuTrigger>
 
           <DropdownMenuContent
-            className="w-(--anchor-width) min-w-52 rounded-lg"
+            className="w-(--anchor-width) min-w-52 rounded-lg text-xs"
             side={state === "collapsed" && !isMobile ? "right" : "top"}
             align={state === "collapsed" && !isMobile ? "end" : "start"}
             sideOffset={6}
           >
             <DropdownMenuGroup>
               <DropdownMenuLabel className="p-0 font-normal">
-                <div className="flex items-center gap-2 px-1.5 py-1.5 text-left text-sm">
+                <div className="flex items-center gap-2 px-1.5 py-1.5 text-left text-xs">
                   <div className="grid flex-1 text-left text-xs leading-tight">
-                    <span className="truncate text-sm font-medium text-popover-foreground">
+                    <span className="truncate text-xs font-medium text-popover-foreground">
                       {user.name}
                     </span>
                     <span className="truncate text-[11px] text-muted-foreground">
@@ -120,30 +120,30 @@ export function SidebarFooter({
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              <DropdownMenuItem render={<Link href="/profile" />}>
+              <DropdownMenuItem className="text-xs" render={<Link href="/profile" />}>
                 <CircleUser className="text-muted-foreground" />
                 Profile
               </DropdownMenuItem>
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger>
+                <DropdownMenuSubTrigger className="text-xs">
                   <Sun className="size-4 text-muted-foreground dark:hidden" />
                   <Moon className="hidden size-4 text-muted-foreground dark:block" />
                   Appearance
                 </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
+                <DropdownMenuSubContent className="text-xs">
                   <DropdownMenuRadioGroup
                     value={theme ?? "system"}
                     onValueChange={setTheme}
                   >
-                    <DropdownMenuRadioItem value="light">
+                    <DropdownMenuRadioItem className="text-xs" value="light">
                       <Sun className="text-muted-foreground" />
                       Light
                     </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="dark">
+                    <DropdownMenuRadioItem className="text-xs" value="dark">
                       <Moon className="text-muted-foreground" />
                       Dark
                     </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="system">
+                    <DropdownMenuRadioItem className="text-xs" value="system">
                       <Monitor className="text-muted-foreground" />
                       System
                     </DropdownMenuRadioItem>
@@ -156,6 +156,7 @@ export function SidebarFooter({
 
             <DropdownMenuGroup>
               <DropdownMenuItem
+                className="text-xs"
                 render={
                   <a
                     href="https://github.com/linuskang/upstream"
@@ -167,7 +168,7 @@ export function SidebarFooter({
                 <ExternalLink className="text-muted-foreground" />
                 GitHub
               </DropdownMenuItem>
-              <DropdownMenuItem render={<Link href="/docs" />}>
+              <DropdownMenuItem className="text-xs" render={<Link href="/docs" />}>
                 <BookOpen className="text-muted-foreground" />
                 Documentation
               </DropdownMenuItem>
@@ -176,7 +177,11 @@ export function SidebarFooter({
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              <DropdownMenuItem variant="destructive" onClick={handleSignOut}>
+              <DropdownMenuItem
+                className="text-xs"
+                variant="destructive"
+                onClick={handleSignOut}
+              >
                 <LogOut />
                 Sign Out
               </DropdownMenuItem>
