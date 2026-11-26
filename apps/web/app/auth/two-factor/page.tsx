@@ -26,7 +26,7 @@ export default function TwoFactorPage() {
   const [mode, setMode] = useState<VerifyMode>("totp")
   const [totpCode, setTotpCode] = useState("")
   const [backupCode, setBackupCode] = useState("")
-  const [trustDevice, setTrustDevice] = useState(true)
+  const [trustDevice, setTrustDevice] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [sessionExpired, setSessionExpired] = useState(false)
