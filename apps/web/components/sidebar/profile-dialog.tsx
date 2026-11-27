@@ -16,6 +16,7 @@ import { authClient } from "@/lib/auth-client"
 import { PasskeysSection } from "@/components/profile/passkeys-section"
 import { TwoFactorSection } from "@/components/profile/two-factor-section"
 import { cn } from "@workspace/ui/lib/utils"
+import { createForm, useForm } from "@workspace/ui/components/form"
 import {
   Avatar,
   AvatarFallback,
@@ -109,31 +110,47 @@ export function ProfileDialog({
   )
 }
 
+type ProfileFormData = {
+  name: string
+}
+
+type SecurityFormData = {
+  currentPassword: string
+  newPassword: string
+  confirmPassword: string
+}
+
+const ProfileForm = createForm<ProfileFormData>()
+const SecurityForm = createForm<SecurityFormData>()
+
 function ProfileSection() {
   const { data: session } = authClient.useSession()
   const user = session?.user
 
-  const [name, setName] = React.useState(user?.name ?? "")
   const [saving, setSaving] = React.useState(false)
 
-  React.useEffect(() => {
-    if (user?.name !== undefined) {
-      setName(user.name)
-    }
-  }, [user?.name])
+  const form = useForm<ProfileFormData>({
+    values: {
+      name: user?.name ?? "",
+    },
+  })
 
   if (!user) return null
 
   const initial = getInitial(user.name, user.email)
-  const isDirty = name.trim() !== "" && name.trim() !== user.name
+  const watchedName = form.watch("name")
+  const isDirty =
+    watchedName !== undefined &&
+    watchedName.trim() !== "" &&
+    watchedName.trim() !== user.name
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!isDirty) return
+  const handleSave = async (data: ProfileFormData) => {
+    const trimmed = data.name.trim()
+    if (!trimmed || trimmed === user.name) return
 
     setSaving(true)
     const { error } = await authClient.updateUser({
-      name: name.trim(),
+      name: trimmed,
     })
     setSaving(false)
 
@@ -146,7 +163,7 @@ function ProfileSection() {
   }
 
   return (
-    <form onSubmit={handleSave} className="space-y-4">
+    <ProfileForm form={form} onSubmit={handleSave} className="space-y-4">
       <div className="flex items-center gap-3.5">
         <Avatar className="size-11 shrink-0">
           <AvatarImage src={user.image ?? undefined} alt={user.name} />
@@ -161,17 +178,23 @@ function ProfileSection() {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="space-y-1.5">
-          <Label htmlFor="account-name" className="text-xs">
-            Display name
-          </Label>
-          <Input
-            id="account-name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your name"
-          />
-        </div>
+        <ProfileForm.Item name="name">
+          <div className="space-y-1.5">
+            <ProfileForm.Label className="text-xs">
+              Display name
+            </ProfileForm.Label>
+            <ProfileForm.Field
+              required
+              rules={{
+                validate: (value) =>
+                  value.trim().length > 0 || "Name cannot be empty",
+              }}
+            >
+              <Input placeholder="Your name" />
+            </ProfileForm.Field>
+            <ProfileForm.Error className="text-xs text-destructive" />
+          </div>
+        </ProfileForm.Item>
 
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
@@ -187,37 +210,40 @@ function ProfileSection() {
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit" size="sm" disabled={!isDirty || saving}>
-          {saving && <Loader2 className="animate-spin" />}
-          Save changes
-        </Button>
+        <ProfileForm.Submit asChild pending={saving}>
+          <Button type="submit" size="sm" disabled={!isDirty || saving}>
+            {saving && <Loader2 className="animate-spin" />}
+            Save changes
+          </Button>
+        </ProfileForm.Submit>
       </div>
-    </form>
+    </ProfileForm>
   )
 }
 
 function SecuritySection() {
-  const [currentPassword, setCurrentPassword] = React.useState("")
-  const [newPassword, setNewPassword] = React.useState("")
-  const [confirmPassword, setConfirmPassword] = React.useState("")
   const [saving, setSaving] = React.useState(false)
 
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const form = useForm<SecurityFormData>({
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+  })
 
-    if (newPassword.length < 8) {
-      toast.error("New password must be at least 8 characters")
-      return
-    }
-    if (newPassword !== confirmPassword) {
-      toast.error("Passwords do not match")
-      return
-    }
+  const [currentPassword, newPassword, confirmPassword] = form.watch([
+    "currentPassword",
+    "newPassword",
+    "confirmPassword",
+  ])
+  const canSubmit = Boolean(currentPassword && newPassword && confirmPassword)
 
+  const handlePasswordChange = async (data: SecurityFormData) => {
     setSaving(true)
     const { error } = await authClient.changePassword({
-      currentPassword,
-      newPassword,
+      currentPassword: data.currentPassword,
+      newPassword: data.newPassword,
       revokeOtherSessions: true,
     })
     setSaving(false)
@@ -227,15 +253,17 @@ function SecuritySection() {
       return
     }
 
-    setCurrentPassword("")
-    setNewPassword("")
-    setConfirmPassword("")
+    form.reset()
     toast.success("Password updated")
   }
 
   return (
     <div className="space-y-5">
-      <form onSubmit={handlePasswordChange} className="space-y-3.5">
+      <SecurityForm
+        form={form}
+        onSubmit={handlePasswordChange}
+        className="space-y-3.5"
+      >
         <div>
           <h4 className="text-xs font-semibold text-foreground">Security</h4>
           <p className="mt-0.5 text-xs text-muted-foreground">
@@ -244,61 +272,74 @@ function SecuritySection() {
         </div>
 
         <div className="space-y-3">
-          <div className="space-y-1.5">
-            <Label htmlFor="current-password" className="text-xs">
-              Current password
-            </Label>
-            <Input
-              id="current-password"
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              required
-            />
-          </div>
+          <SecurityForm.Item name="currentPassword">
+            <div className="space-y-1.5">
+              <SecurityForm.Label className="text-xs">
+                Current password
+              </SecurityForm.Label>
+              <SecurityForm.Field required>
+                <Input type="password" autoComplete="current-password" />
+              </SecurityForm.Field>
+              <SecurityForm.Error className="text-xs text-destructive" />
+            </div>
+          </SecurityForm.Item>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="new-password" className="text-xs">
-                New password
-              </Label>
-              <Input
-                id="new-password"
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-              />
-            </div>
+            <SecurityForm.Item name="newPassword">
+              <div className="space-y-1.5">
+                <SecurityForm.Label className="text-xs">
+                  New password
+                </SecurityForm.Label>
+                <SecurityForm.Field
+                  required
+                  rules={{
+                    minLength: {
+                      value: 8,
+                      message: "New password must be at least 8 characters",
+                    },
+                    deps: ["confirmPassword"],
+                  }}
+                >
+                  <Input type="password" autoComplete="new-password" />
+                </SecurityForm.Field>
+                <SecurityForm.Error className="text-xs text-destructive" />
+              </div>
+            </SecurityForm.Item>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="confirm-password" className="text-xs">
-                Confirm password
-              </Label>
-              <Input
-                id="confirm-password"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </div>
+            <SecurityForm.Item name="confirmPassword">
+              <div className="space-y-1.5">
+                <SecurityForm.Label className="text-xs">
+                  Confirm password
+                </SecurityForm.Label>
+                <SecurityForm.Field
+                  required
+                  rules={{
+                    validate: (value, formValues) =>
+                      value === formValues.newPassword ||
+                      "Passwords do not match",
+                  }}
+                >
+                  <Input type="password" autoComplete="new-password" />
+                </SecurityForm.Field>
+                <SecurityForm.Error className="text-xs text-destructive" />
+              </div>
+            </SecurityForm.Item>
           </div>
         </div>
 
         <div className="flex justify-end">
-          <Button
-            type="submit"
-            size="sm"
-            disabled={
-              saving || !currentPassword || !newPassword || !confirmPassword
-            }
-          >
-            {saving && <Loader2 className="animate-spin" />}
-            Update password
-          </Button>
+          <SecurityForm.Submit asChild pending={saving}>
+            <Button
+              type="submit"
+              size="sm"
+              disabled={saving || !canSubmit}
+            >
+              {saving && <Loader2 className="animate-spin" />}
+              Update password
+            </Button>
+          </SecurityForm.Submit>
         </div>
-      </form>
+      </SecurityForm>
 
       <div className="space-y-2.5">
         <TwoFactorSection />

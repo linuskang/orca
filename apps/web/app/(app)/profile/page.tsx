@@ -4,20 +4,21 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
 import { toast } from "sonner"
-import {
-  Check,
-  Laptop,
-  Loader2,
-  Monitor,
-  Moon,
-  Sun,
-} from "lucide-react"
+import { Check, Laptop, Loader2, Monitor, Moon, Sun } from "lucide-react"
 
 import { authClient } from "@/lib/auth-client"
 import { PasskeysSection } from "@/components/profile/passkeys-section"
+import {
+  ProfileCard,
+  ProfileCardContent,
+  ProfileCardDescription,
+  ProfileCardHeader,
+  ProfileCardTitle,
+} from "@/components/profile/section-card"
 import { TwoFactorSection } from "@/components/profile/two-factor-section"
 import { PageBreadcrumb } from "@/components/sidebar/breadcrumb"
 import { cn } from "@workspace/ui/lib/utils"
+import { createForm, useForm } from "@workspace/ui/components/form"
 import {
   Avatar,
   AvatarFallback,
@@ -26,8 +27,6 @@ import {
 import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
-import { Label } from "@workspace/ui/components/label"
-import { Separator } from "@workspace/ui/components/separator"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 import { Switch } from "@workspace/ui/components/switch"
 
@@ -82,13 +81,10 @@ export default function ProfilePage() {
 
   if (isPending) {
     return (
-      <div className="mx-auto w-full max-w-2xl space-y-6 px-6 py-8">
-        <div className="space-y-1.5">
-          <Skeleton className="h-6 w-24" />
-          <Skeleton className="h-4 w-64" />
-        </div>
-        <Separator />
-        <Skeleton className="h-32 w-full rounded-lg" />
+      <div className="mx-auto w-full max-w-6xl space-y-6 px-6 py-8">
+        <Skeleton className="h-52 w-full rounded-xl" />
+        <Skeleton className="h-44 w-full rounded-xl" />
+        <Skeleton className="h-32 w-full rounded-xl" />
       </div>
     )
   }
@@ -98,57 +94,64 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-6 py-8">
+    <div className="mx-auto w-full max-w-6xl px-6 py-8">
       <PageBreadcrumb items={[{ label: "Profile", href: "/profile" }]} />
-      <div className="pb-6">
-        <h1 className="text-lg font-semibold tracking-tight text-foreground">
-          Profile
-        </h1>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Manage your account details, security, and preferences.
-        </p>
-      </div>
 
-      <div className="space-y-8">
+      <div className="space-y-6">
         <ProfileSection />
-        <Separator />
-        <SecuritySection />
-        <Separator />
+        <PasswordSection />
+        <TwoFactorSection variant="card" />
+        <PasskeysSection variant="card" />
         <SessionsSection />
-        <Separator />
-        <AppearanceSection />
-        <Separator />
         <NotificationsSection />
       </div>
     </div>
   )
 }
 
+type ProfileFormData = {
+  name: string
+  email: string
+}
+
+type SecurityFormData = {
+  currentPassword: string
+  newPassword: string
+  confirmPassword: string
+}
+
+const ProfileForm = createForm<ProfileFormData>()
+const SecurityForm = createForm<SecurityFormData>()
+
 function ProfileSection() {
   const { data: session } = authClient.useSession()
   const user = session?.user
 
-  const [name, setName] = React.useState(user?.name ?? "")
   const [saving, setSaving] = React.useState(false)
 
-  React.useEffect(() => {
-    if (user?.name !== undefined) {
-      setName(user.name)
-    }
-  }, [user?.name])
+  const form = useForm<ProfileFormData>({
+    values: {
+      name: user?.name ?? "",
+      email: user?.email ?? "",
+    },
+  })
 
   if (!user) return null
 
   const initial = getInitial(user.name, user.email)
-  const isDirty = name.trim() !== "" && name.trim() !== user.name
+  const watchedName = form.watch("name")
+  const isDirty =
+    watchedName !== undefined &&
+    watchedName.trim() !== "" &&
+    watchedName.trim() !== user.name
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!isDirty) return
+  const handleSave = async (data: ProfileFormData) => {
+    const trimmed = data.name.trim()
+    if (!trimmed || trimmed === user.name) return
 
     setSaving(true)
     const { error } = await authClient.updateUser({
-      name: name.trim(),
+      name: trimmed,
     })
     setSaving(false)
 
@@ -161,78 +164,114 @@ function ProfileSection() {
   }
 
   return (
-    <form onSubmit={handleSave} className="space-y-4">
-      <div className="flex items-center gap-3.5">
-        <Avatar className="size-11 shrink-0">
-          <AvatarImage src={user.image ?? undefined} alt={user.name} />
-          <AvatarFallback className="text-sm">{initial}</AvatarFallback>
-        </Avatar>
-        <div className="min-w-0">
-          <p className="truncate text-sm font-medium text-foreground">
-            {user.name}
-          </p>
-          <p className="truncate text-xs text-muted-foreground">{user.email}</p>
-        </div>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="space-y-1.5">
-          <Label htmlFor="account-name" className="text-xs">
-            Display name
-          </Label>
-          <Input
-            id="account-name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your name"
-          />
-        </div>
-
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="account-email" className="text-xs">
-              Email address
-            </Label>
-            <Badge variant="secondary" className="h-4 px-1.5 text-[10px]">
-              {user.emailVerified ? "Verified" : "Unverified"}
-            </Badge>
+    <ProfileForm form={form} onSubmit={handleSave}>
+      <ProfileCard>
+        <ProfileCardHeader>
+          <div className="min-w-0">
+            <ProfileForm.Title className="text-sm font-semibold tracking-tight text-foreground">
+              Profile Details
+            </ProfileForm.Title>
+            <ProfileForm.Description className="mt-1 text-xs text-muted-foreground">
+              Manage your avatar, display name, and email.
+            </ProfileForm.Description>
           </div>
-          <Input id="account-email" value={user.email} disabled />
-        </div>
-      </div>
+        </ProfileCardHeader>
 
-      <div className="flex justify-end">
-        <Button type="submit" size="sm" disabled={!isDirty || saving}>
-          {saving && <Loader2 className="animate-spin" />}
-          Save changes
-        </Button>
-      </div>
-    </form>
+        <ProfileCardContent className="space-y-4">
+          <div className="space-y-2">
+            <span className="text-xs font-medium text-foreground">Avatar</span>
+
+            <div className="flex items-center gap-3">
+              <Avatar className="size-12 shrink-0">
+                <AvatarImage src={user.image ?? undefined} alt={user.name} />
+                <AvatarFallback className="text-sm">{initial}</AvatarFallback>
+              </Avatar>
+
+              <div className="space-y-1">
+                <Button variant="outline" size="sm" className="w-fit" disabled>
+                  Upload
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  JPG, PNG, or WebP supported.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <ProfileForm.Item name="name">
+              <div className="space-y-1.5">
+                <ProfileForm.Label className="text-xs font-medium">
+                  Display name
+                </ProfileForm.Label>
+                <ProfileForm.Field
+                  required
+                  rules={{
+                    validate: (value) =>
+                      value.trim().length > 0 || "Name cannot be empty",
+                  }}
+                >
+                  <Input placeholder="Your name" />
+                </ProfileForm.Field>
+                <ProfileForm.Error className="text-xs text-destructive" />
+              </div>
+            </ProfileForm.Item>
+
+            <ProfileForm.Item name="email">
+              <div className="space-y-1.5">
+                <ProfileForm.Label
+                  htmlFor="email"
+                  className="text-xs font-medium"
+                >
+                  Email address
+                </ProfileForm.Label>
+                <Input id="email" value={user.email} disabled />
+              </div>
+            </ProfileForm.Item>
+          </div>
+
+          <div className="flex justify-end">
+            <ProfileForm.Submit asChild pending={saving}>
+              <Button
+                type="submit"
+                variant="outline"
+                size="sm"
+                disabled={!isDirty || saving}
+              >
+                {saving && <Loader2 className="animate-spin" />}
+                Save changes
+              </Button>
+            </ProfileForm.Submit>
+          </div>
+        </ProfileCardContent>
+      </ProfileCard>
+    </ProfileForm>
   )
 }
 
-function SecuritySection() {
-  const [currentPassword, setCurrentPassword] = React.useState("")
-  const [newPassword, setNewPassword] = React.useState("")
-  const [confirmPassword, setConfirmPassword] = React.useState("")
+function PasswordSection() {
   const [saving, setSaving] = React.useState(false)
 
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const form = useForm<SecurityFormData>({
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+  })
 
-    if (newPassword.length < 8) {
-      toast.error("New password must be at least 8 characters")
-      return
-    }
-    if (newPassword !== confirmPassword) {
-      toast.error("Passwords do not match")
-      return
-    }
+  const [currentPassword, newPassword, confirmPassword] = form.watch([
+    "currentPassword",
+    "newPassword",
+    "confirmPassword",
+  ])
+  const canSubmit = Boolean(currentPassword && newPassword && confirmPassword)
 
+  const handlePasswordChange = async (data: SecurityFormData) => {
     setSaving(true)
     const { error } = await authClient.changePassword({
-      currentPassword,
-      newPassword,
+      currentPassword: data.currentPassword,
+      newPassword: data.newPassword,
       revokeOtherSessions: true,
     })
     setSaving(false)
@@ -242,84 +281,97 @@ function SecuritySection() {
       return
     }
 
-    setCurrentPassword("")
-    setNewPassword("")
-    setConfirmPassword("")
+    form.reset()
     toast.success("Password updated")
   }
 
   return (
-    <div className="space-y-5">
-      <form onSubmit={handlePasswordChange} className="space-y-3.5">
-        <div>
-          <h2 className="text-sm font-medium text-foreground">Security</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            Updating your password will sign out other active sessions.
-          </p>
-        </div>
+    <SecurityForm form={form} onSubmit={handlePasswordChange}>
+      <ProfileCard>
+        <ProfileCardHeader>
+          <div className="min-w-0">
+            <SecurityForm.Title className="text-sm font-semibold tracking-tight text-foreground">
+              Password
+            </SecurityForm.Title>
+            <SecurityForm.Description className="mt-1 text-xs text-muted-foreground">
+              Updating your password will sign out other active sessions.
+            </SecurityForm.Description>
+          </div>
+        </ProfileCardHeader>
 
-        <div className="space-y-3">
-          <div className="space-y-1.5">
-            <Label htmlFor="current-password" className="text-xs">
-              Current password
-            </Label>
-            <Input
-              id="current-password"
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              required
-            />
+        <ProfileCardContent className="space-y-4">
+          <div className="space-y-3">
+            <SecurityForm.Item name="currentPassword">
+              <div className="space-y-1.5">
+                <SecurityForm.Label className="text-xs font-medium">
+                  Current password
+                </SecurityForm.Label>
+                <SecurityForm.Field required>
+                  <Input type="password" autoComplete="current-password" />
+                </SecurityForm.Field>
+                <SecurityForm.Error className="text-xs text-destructive" />
+              </div>
+            </SecurityForm.Item>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <SecurityForm.Item name="newPassword">
+                <div className="space-y-1.5">
+                  <SecurityForm.Label className="text-xs font-medium">
+                    New password
+                  </SecurityForm.Label>
+                  <SecurityForm.Field
+                    required
+                    rules={{
+                      minLength: {
+                        value: 8,
+                        message: "New password must be at least 8 characters",
+                      },
+                      deps: ["confirmPassword"],
+                    }}
+                  >
+                    <Input type="password" autoComplete="new-password" />
+                  </SecurityForm.Field>
+                  <SecurityForm.Error className="text-xs text-destructive" />
+                </div>
+              </SecurityForm.Item>
+
+              <SecurityForm.Item name="confirmPassword">
+                <div className="space-y-1.5">
+                  <SecurityForm.Label className="text-xs font-medium">
+                    Confirm password
+                  </SecurityForm.Label>
+                  <SecurityForm.Field
+                    required
+                    rules={{
+                      validate: (value, formValues) =>
+                        value === formValues.newPassword ||
+                        "Passwords do not match",
+                    }}
+                  >
+                    <Input type="password" autoComplete="new-password" />
+                  </SecurityForm.Field>
+                  <SecurityForm.Error className="text-xs text-destructive" />
+                </div>
+              </SecurityForm.Item>
+            </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="new-password" className="text-xs">
-                New password
-              </Label>
-              <Input
-                id="new-password"
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="confirm-password" className="text-xs">
-                Confirm password
-              </Label>
-              <Input
-                id="confirm-password"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </div>
+          <div className="flex justify-end">
+            <SecurityForm.Submit asChild pending={saving}>
+              <Button
+                type="submit"
+                variant="outline"
+                size="sm"
+                disabled={saving || !canSubmit}
+              >
+                {saving && <Loader2 className="animate-spin" />}
+                Update password
+              </Button>
+            </SecurityForm.Submit>
           </div>
-        </div>
-
-        <div className="flex justify-end">
-          <Button
-            type="submit"
-            size="sm"
-            disabled={
-              saving || !currentPassword || !newPassword || !confirmPassword
-            }
-          >
-            {saving && <Loader2 className="animate-spin" />}
-            Update password
-          </Button>
-        </div>
-      </form>
-
-      <div className="space-y-2.5">
-        <TwoFactorSection />
-        <PasskeysSection />
-      </div>
-    </div>
+        </ProfileCardContent>
+      </ProfileCard>
+    </SecurityForm>
   )
 }
 
@@ -375,16 +427,15 @@ function SessionsSection() {
   }
 
   return (
-    <div className="space-y-3.5">
-      <div className="flex items-center justify-between gap-2">
-        <div>
-          <h2 className="text-sm font-medium text-foreground">
-            Active sessions
-          </h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">
+    <ProfileCard>
+      <ProfileCardHeader>
+        <div className="min-w-0">
+          <ProfileCardTitle>Active Sessions</ProfileCardTitle>
+          <ProfileCardDescription>
             Devices currently signed into your account.
-          </p>
+          </ProfileCardDescription>
         </div>
+
         {otherSessionsCount > 0 && (
           <Button
             variant="outline"
@@ -396,25 +447,25 @@ function SessionsSection() {
             Sign out others
           </Button>
         )}
-      </div>
+      </ProfileCardHeader>
 
       {loading ? (
-        <div className="space-y-2">
-          <Skeleton className="h-12 w-full rounded-lg" />
-          <Skeleton className="h-12 w-full rounded-lg" />
-        </div>
-      ) : (
-        <div className="space-y-2">
+        <ProfileCardContent className="space-y-2">
+          <Skeleton className="h-10 w-full rounded-md" />
+          <Skeleton className="h-10 w-full rounded-md" />
+        </ProfileCardContent>
+      ) : sessions.length > 0 ? (
+        <ProfileCardContent className="divide-y divide-inner-border p-0">
           {sessions.map((item) => {
             const isCurrent = item.token === currentToken
             return (
               <div
                 key={item.id}
-                className="flex items-center justify-between gap-3 rounded-lg border border-sidebar-border bg-card/40 px-3.5 py-2.5"
+                className="flex items-center justify-between gap-3 px-4 py-3"
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
-                    <Laptop className="size-3.5" />
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                    <Laptop className="size-4" />
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
@@ -453,9 +504,15 @@ function SessionsSection() {
               </div>
             )
           })}
-        </div>
+        </ProfileCardContent>
+      ) : (
+        <ProfileCardContent>
+          <p className="text-xs text-muted-foreground">
+            No active sessions found.
+          </p>
+        </ProfileCardContent>
       )}
-    </div>
+    </ProfileCard>
   )
 }
 
@@ -469,44 +526,48 @@ function AppearanceSection() {
   ] as const
 
   return (
-    <div className="space-y-3.5">
-      <div>
-        <h2 className="text-sm font-medium text-foreground">Appearance</h2>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          Select your interface theme or press{" "}
-          <kbd className="rounded border border-border bg-muted px-1 py-0.5 font-mono text-[10px] text-foreground">
-            D
-          </kbd>{" "}
-          to toggle.
-        </p>
-      </div>
+    <ProfileCard>
+      <ProfileCardHeader>
+        <div className="min-w-0">
+          <ProfileCardTitle>Appearance</ProfileCardTitle>
+          <ProfileCardDescription>
+            Select your interface theme or press{" "}
+            <kbd className="rounded border border-border bg-muted px-1 py-0.5 font-mono text-[10px] text-foreground">
+              D
+            </kbd>{" "}
+            to toggle.
+          </ProfileCardDescription>
+        </div>
+      </ProfileCardHeader>
 
-      <div className="grid grid-cols-3 gap-2.5">
-        {options.map((option) => {
-          const Icon = option.icon
-          const isSelected = (theme ?? "system") === option.value
-          return (
-            <button
-              key={option.value}
-              type="button"
-              onClick={() => setTheme(option.value)}
-              className={cn(
-                "flex items-center justify-between gap-2 rounded-lg border px-3 py-2.5 text-left transition-colors",
-                isSelected
-                  ? "border-foreground bg-muted/60 text-foreground"
-                  : "border-sidebar-border bg-transparent text-muted-foreground hover:bg-muted/40 hover:text-foreground"
-              )}
-            >
-              <div className="flex items-center gap-2">
-                <Icon className="size-3.5" />
-                <span className="text-xs font-medium">{option.label}</span>
-              </div>
-              {isSelected && <Check className="size-3.5 text-foreground" />}
-            </button>
-          )
-        })}
-      </div>
-    </div>
+      <ProfileCardContent>
+        <div className="grid grid-cols-3 gap-2.5">
+          {options.map((option) => {
+            const Icon = option.icon
+            const isSelected = (theme ?? "system") === option.value
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setTheme(option.value)}
+                className={cn(
+                  "flex items-center justify-between gap-2 rounded-lg border px-3 py-2.5 text-left transition-colors",
+                  isSelected
+                    ? "border-foreground bg-muted/60 text-foreground"
+                    : "border-inner-border bg-transparent text-muted-foreground hover:bg-muted/40 hover:text-foreground"
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <Icon className="size-3.5" />
+                  <span className="text-xs font-medium">{option.label}</span>
+                </div>
+                {isSelected && <Check className="size-3.5 text-foreground" />}
+              </button>
+            )
+          })}
+        </div>
+      </ProfileCardContent>
+    </ProfileCard>
   )
 }
 
@@ -542,21 +603,23 @@ function NotificationsSection() {
   ]
 
   return (
-    <div className="space-y-3">
-      <div>
-        <h2 className="text-sm font-medium text-foreground">Notifications</h2>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          Choose which account notifications you receive.
-        </p>
-      </div>
+    <ProfileCard>
+      <ProfileCardHeader>
+        <div className="min-w-0">
+          <ProfileCardTitle>Notifications</ProfileCardTitle>
+          <ProfileCardDescription>
+            Choose which account notifications you receive.
+          </ProfileCardDescription>
+        </div>
+      </ProfileCardHeader>
 
-      <div className="divide-y divide-sidebar-border">
+      <ProfileCardContent className="divide-y divide-inner-border p-0">
         {items.map((item) => (
           <div
             key={item.key}
-            className="flex items-center justify-between gap-4 py-2.5 first:pt-0 last:pb-0"
+            className="flex items-center justify-between gap-4 px-4 py-3"
           >
-            <div>
+            <div className="min-w-0">
               <p className="text-xs font-medium text-foreground">
                 {item.title}
               </p>
@@ -572,7 +635,7 @@ function NotificationsSection() {
             />
           </div>
         ))}
-      </div>
-    </div>
+      </ProfileCardContent>
+    </ProfileCard>
   )
 }

@@ -2,7 +2,7 @@ import { Geist, Geist_Mono, Inter } from "next/font/google"
 
 import "@workspace/ui/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { TRPCProvider } from "@/components/trpc-provider"
+import { TRPCReactProvider } from "@/trpc/client"
 import { cn } from "@workspace/ui/lib/utils"
 import { TooltipProvider } from "@workspace/ui/components/tooltip"
 import { Toaster } from "@workspace/ui/components/sonner"
@@ -32,9 +32,9 @@ export default function RootLayout({
     >
       <body>
         <TooltipProvider>
-          <TRPCProvider>
+          <TRPCReactProvider>
             <ThemeProvider>{children}</ThemeProvider>
-          </TRPCProvider>
+          </TRPCReactProvider>
         </TooltipProvider>
         <Toaster position="top-center" />
       </body>

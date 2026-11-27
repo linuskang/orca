@@ -1,3 +1,3 @@
 export { appRouter } from "./router"
 export type { AppRouter } from "./router"
-export { createTRPCContext } from "./trpc"
+export { createCallerFactory, createTRPCContext } from "./trpc"

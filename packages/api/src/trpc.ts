@@ -1,4 +1,4 @@
-import { initTRPC } from "@trpc/server"
+import { initTRPC, TRPCError } from "@trpc/server"
 import superjson from "superjson"
 import { auth } from "@workspace/auth/server"
 import { prisma } from "@workspace/db"
@@ -19,10 +19,11 @@ const t = initTRPC
   })
 
 export const createTRPCRouter = t.router
+export const createCallerFactory = t.createCallerFactory
 export const publicProcedure = t.procedure
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.session?.user) {
-    throw new Error("UNAUTHORIZED")
+    throw new TRPCError({ code: "UNAUTHORIZED" })
   }
   return next({
     ctx: {

@@ -8,6 +8,14 @@ import { Check, Copy, Loader2, Shield } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
 import { parseTotpSecret } from "@/lib/security"
 import { BackupCodesGrid } from "@/components/profile/backup-codes-grid"
+import {
+  ProfileCard,
+  ProfileCardContent,
+  ProfileCardDescription,
+  ProfileCardHeader,
+  ProfileCardTitle,
+} from "@/components/profile/section-card"
+import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
 import {
   Dialog,
@@ -26,7 +34,11 @@ import {
 } from "@workspace/ui/components/input-otp"
 import { Label } from "@workspace/ui/components/label"
 
-export function TwoFactorSection() {
+export function TwoFactorSection({
+  variant = "default",
+}: {
+  variant?: "default" | "card"
+} = {}) {
   const { data: session } = authClient.useSession()
   const isEnabled = Boolean(session?.user?.twoFactorEnabled)
   const email = session?.user?.email
@@ -35,58 +47,102 @@ export function TwoFactorSection() {
   const [regenerateOpen, setRegenerateOpen] = React.useState(false)
   const [disableOpen, setDisableOpen] = React.useState(false)
 
+  const actions = (
+    <div className="flex shrink-0 items-center gap-1.5">
+      {isEnabled ? (
+        <>
+          <Button
+            type="button"
+            variant="outline"
+            size="xs"
+            onClick={() => setRegenerateOpen(true)}
+          >
+            Backup codes
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="xs"
+            className="text-destructive hover:text-destructive"
+            onClick={() => setDisableOpen(true)}
+          >
+            Disable
+          </Button>
+        </>
+      ) : (
+        <Button
+          type="button"
+          variant="outline"
+          size="xs"
+          onClick={() => setEnableOpen(true)}
+        >
+          Set up
+        </Button>
+      )}
+    </div>
+  )
+
   return (
     <>
-      <div className="flex items-center justify-between gap-4 rounded-lg border border-sidebar-border px-3.5 py-2.5">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
-            <Shield className="size-3.5" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-xs font-medium text-foreground">
-              Two-factor authentication
-            </p>
-            <p className="text-[11px] text-muted-foreground">
-              {isEnabled
-                ? "Authenticator app and backup codes are active."
-                : "Require a verification code when signing in with a password."}
-            </p>
-          </div>
-        </div>
+      {variant === "card" ? (
+        <ProfileCard>
+          <ProfileCardHeader>
+            <div className="min-w-0">
+              <ProfileCardTitle>Two-Factor Authentication</ProfileCardTitle>
+              <ProfileCardDescription>
+                Add an extra layer of security when signing in with a password.
+              </ProfileCardDescription>
+            </div>
+            {isEnabled && (
+              <Badge variant="secondary" className="h-5 px-2 text-[11px]">
+                Enabled
+              </Badge>
+            )}
+          </ProfileCardHeader>
 
-        <div className="flex shrink-0 items-center gap-1.5">
-          {isEnabled ? (
-            <>
-              <Button
-                type="button"
-                variant="outline"
-                size="xs"
-                onClick={() => setRegenerateOpen(true)}
-              >
-                Backup codes
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="xs"
-                className="text-destructive hover:text-destructive"
-                onClick={() => setDisableOpen(true)}
-              >
-                Disable
-              </Button>
-            </>
-          ) : (
-            <Button
-              type="button"
-              variant="outline"
-              size="xs"
-              onClick={() => setEnableOpen(true)}
-            >
-              Set up
-            </Button>
-          )}
+          <ProfileCardContent>
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                  <Shield className="size-4" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-foreground">
+                    Authenticator app
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {isEnabled
+                      ? "Authenticator app and backup codes are active."
+                      : "Require a verification code when signing in with a password."}
+                  </p>
+                </div>
+              </div>
+
+              {actions}
+            </div>
+          </ProfileCardContent>
+        </ProfileCard>
+      ) : (
+        <div className="flex items-center justify-between gap-4 rounded-lg border border-sidebar-border px-3.5 py-2.5">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
+              <Shield className="size-3.5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-foreground">
+                Two-factor authentication
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                {isEnabled
+                  ? "Authenticator app and backup codes are active."
+                  : "Require a verification code when signing in with a password."}
+              </p>
+            </div>
+          </div>
+
+          {actions}
         </div>
-      </div>
+      )}
 
       <EnableTwoFactorDialog
         open={enableOpen}
