@@ -201,7 +201,7 @@ function ProfileSection() {
           <div className="grid gap-3 sm:grid-cols-2">
             <ProfileForm.Item name="name">
               <div className="space-y-1.5">
-                <ProfileForm.Label className="text-xs font-medium">
+                <ProfileForm.Label className="text-xs font-medium text-foreground">
                   Display name
                 </ProfileForm.Label>
                 <ProfileForm.Field
@@ -221,7 +221,7 @@ function ProfileSection() {
               <div className="space-y-1.5">
                 <ProfileForm.Label
                   htmlFor="email"
-                  className="text-xs font-medium"
+                  className="text-xs font-medium text-foreground"
                 >
                   Email address
                 </ProfileForm.Label>
@@ -234,7 +234,6 @@ function ProfileSection() {
             <ProfileForm.Submit asChild pending={saving}>
               <Button
                 type="submit"
-                variant="outline"
                 size="sm"
                 disabled={!isDirty || saving}
               >
@@ -303,7 +302,7 @@ function PasswordSection() {
           <div className="space-y-3">
             <SecurityForm.Item name="currentPassword">
               <div className="space-y-1.5">
-                <SecurityForm.Label className="text-xs font-medium">
+                <SecurityForm.Label className="text-xs font-medium text-foreground">
                   Current password
                 </SecurityForm.Label>
                 <SecurityForm.Field required>
@@ -316,7 +315,7 @@ function PasswordSection() {
             <div className="grid gap-3 sm:grid-cols-2">
               <SecurityForm.Item name="newPassword">
                 <div className="space-y-1.5">
-                  <SecurityForm.Label className="text-xs font-medium">
+                  <SecurityForm.Label className="text-xs font-medium text-foreground">
                     New password
                   </SecurityForm.Label>
                   <SecurityForm.Field
@@ -337,7 +336,7 @@ function PasswordSection() {
 
               <SecurityForm.Item name="confirmPassword">
                 <div className="space-y-1.5">
-                  <SecurityForm.Label className="text-xs font-medium">
+                  <SecurityForm.Label className="text-xs font-medium text-foreground">
                     Confirm password
                   </SecurityForm.Label>
                   <SecurityForm.Field
