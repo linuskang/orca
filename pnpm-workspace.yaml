@@ -21,4 +21,3 @@ minimumReleaseAgeExclude:
   - '@better-auth/prisma-adapter@1.7.22'
   - '@better-auth/telemetry@1.7.22'
   - better-auth@1.7.22
-  - '@linuskang/forms@0.0.1'
